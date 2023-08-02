@@ -65,7 +65,7 @@ client.once('ready', function () {
 //Funktion to check VoiceChannel
 function checkVoiceChannel(interaction) {
     const guild = client.guilds.cache.get(interaction.guild.id);
-    const guildMember = guild.members.cache.get(interaction.user.id);
+    const guildMember = guild.members.cache.get(interaction.user?.id);
     const voiceChannel = guildMember?.voice.channel;
     if (voiceChannel) {
         interaction.reply(`You are currently in the voice channel: ${voiceChannel.name}`);
@@ -148,14 +148,10 @@ client.on('interactionCreate', async function (interaction) {
           channel =>
             channel.name.toLowerCase() === destinationVoiceChannelName.toLowerCase()
         );
+     //   console.log(member);
     
         if (!voiceChannel) {
           interaction.reply(`Voice channel "${destinationVoiceChannelName}" not found.`);
-          return;
-        }
-
-        if (!member.voice.channel) {
-          interaction.reply(`${member.displayName} is not currently in a voice channel.`);
           return;
         }
     
