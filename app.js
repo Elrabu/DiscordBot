@@ -107,7 +107,7 @@ client.on('interactionCreate', async function (interaction) {
             const content = `${input}`;
             interaction.channel.send(content);
           } else {
-            interaction.reply({
+            interaction.reply({ 
               content: 'Please provide an input. Usage: `/say <@user> <your_text>`',
               ephemeral: true,
             });
@@ -127,8 +127,7 @@ client.on('interactionCreate', async function (interaction) {
           interaction.reply(`**Voice channels:**\n${voiceChannelNames.join('\n')} \n\n**Text channels:**\n${textChannelNames.join('\n')}`);
       });
 
-
-
+ 
       //Move Members
     }else if (commandName === 'move') {
 
@@ -141,31 +140,72 @@ client.on('interactionCreate', async function (interaction) {
 
         const memberOption = interaction.guild.members.cache.get(pingedUserID);
 
-        const destinationVoiceChannelName = 'Klippe';
+        const destinationVoiceChannelName = 'Fall';
 
         const member = await interaction.guild.members.fetch(memberOption.id);
-        const voiceChannel = interaction.guild.channels.cache.find(
+       /* const voiceChannel = interaction.guild.channels.cache.find(
           channel =>
             channel.name.toLowerCase() === destinationVoiceChannelName.toLowerCase()
+        ); */
+        const voiceChannels = interaction.guild.channels.cache.filter(
+          channel => channel.name.toLowerCase() === destinationVoiceChannelName.toLowerCase()
         );
-     //   console.log(member);
-    
-        if (!voiceChannel) {
-          interaction.reply(`Voice channel "${destinationVoiceChannelName}" not found.`);
-          return;
-        }
-    
-        try {
-    
-          member.voice.setChannel(voiceChannel);
-          interaction.reply(`Moved ${member.displayName} to ${voiceChannel.name}.`);
-        } catch (error) {
-          console.error('Error occurred while moving the member:', error);
-          interaction.reply('An error occurred while moving the member.');
-        }
-      }
+        const sortedVoiceChannels = Array.from(voiceChannels.values()).sort((a, b) => a.rawPosition - b.rawPosition);
+      
+        interaction.reply(`Moving ${member.displayName} to the first channel...`);
+      
+        const moveMemberToNextChannel = (index) => {
+          if (index >= sortedVoiceChannels.length) {
+            return;
+          }
+      
+          const voiceChannel = sortedVoiceChannels[index];
+      
+          setTimeout(() => {
+            try {
+              member.voice.setChannel(voiceChannel);
+              interaction.followUp(`Moved ${member.displayName} to ${voiceChannel.name}.`);
+              moveMemberToNextChannel(index + 1); // Move to the next channel
+            } catch (error) {
+              console.error('Error occurred while moving the member:', error);
+              interaction.followUp('An error occurred while moving the member.');
+            }
+          }, 1000); // 1000 milliseconds = 1 second
+        };
+      
+        // Start the move sequence by calling the function with index 0
+        moveMemberToNextChannel(0);
+
+      } 
     }
     
 });
 
 client.login(token);
+
+ //Move member to first voice channel:
+   /*     try {
+          member.voice.setChannel(firstVoiceChannel);
+          interaction.reply(`Moved ${member.displayName} to ${firstVoiceChannel.name}.`);
+        } catch (error) {
+          console.error('Error occurred while moving the member:', error);
+          interaction.reply('An error occurred while moving the member.');
+        } */
+ //Move Member to first channel then to the next   
+         /*   const firstVoiceChannel = sortedVoiceChannels[0];
+        const secondVoiceChannel = sortedVoiceChannels[1];
+
+        try {
+          member.voice.setChannel(firstVoiceChannel);
+          interaction.reply(`Moved ${member.displayName} to ${firstVoiceChannel.name}.`);
+    
+          // Move the member to the secondVoiceChannel after one second
+          setTimeout(() => {
+            member.voice.setChannel(secondVoiceChannel);
+            interaction.followUp(`Moved ${member.displayName} to ${secondVoiceChannel.name}.`);
+          }, 1000); // 1000 milliseconds = 1 second
+        } catch (error) {
+          console.error('Error occurred while moving the member:', error);
+          interaction.reply('An error occurred while moving the member.');
+        } */
+
