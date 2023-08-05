@@ -152,33 +152,37 @@ client.on('interactionCreate', async function (interaction) {
         );
         const sortedVoiceChannels = Array.from(voiceChannels.values()).sort((a, b) => a.rawPosition - b.rawPosition);
       
-        interaction.reply(`Moving ${member.displayName} to the first channel...`);
+        interaction.reply({
+          content: `Moving ${member.displayName} to the first channel...`,
+          ephemeral: true,
+        });
       
         const moveMemberToNextChannel = (index) => {
           if (index >= sortedVoiceChannels.length) {
             return;
           }
-      
           const voiceChannel = sortedVoiceChannels[index];
       
           setTimeout(() => {
             try {
               member.voice.setChannel(voiceChannel);
-              interaction.followUp(`Moved ${member.displayName} to ${voiceChannel.name}.`);
+              interaction.followUp({
+                content: `Moved ${member.displayName} to ${voiceChannel.name}.`,
+                ephemeral: true,
+              });
               moveMemberToNextChannel(index + 1); // Move to the next channel
-            } catch (error) {
+            } catch (error) { 
+              
               console.error('Error occurred while moving the member:', error);
               interaction.followUp('An error occurred while moving the member.');
-            }
+            } 
           }, 1000); // 1000 milliseconds = 1 second
-        };
+        }; 
       
         // Start the move sequence by calling the function with index 0
         moveMemberToNextChannel(0);
-
       } 
     }
-    
 });
 
 client.login(token);
