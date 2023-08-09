@@ -63,14 +63,13 @@ client.once('ready', function () {
 });
 
 //Funktion to check VoiceChannel
-function checkVoiceChannel(interaction) {
-  const guild = client.guilds.cache.get(interaction.guild.id);
-  const guildMember = guild.members.cache.get(interaction.user?.id);
-  const voiceChannel = guildMember?.voice.channel;
+async function checkVoiceChannel(interaction) {
+  const guildMember = await interaction.guild.members.fetch(interaction.user.id);
+  const voiceChannel = guildMember.voice.channel;
   if (voiceChannel) {
-    interaction.reply(`You are currently in the voice channel: ${voiceChannel.name}`);
+    await interaction.reply(`You are currently in the voice channel: ${voiceChannel.name}`);
   } else {
-    interaction.reply('You are not currently in a voice channel.');
+    await interaction.reply('You are not currently in a voice channel.');
   }
 }
 client.on('interactionCreate', async function (interaction) {
@@ -84,6 +83,7 @@ client.on('interactionCreate', async function (interaction) {
     interaction.reply(`You tried the test message ${interaction.user}`)
   } else if (commandName === 'channel') {
     checkVoiceChannel(interaction)
+    interaction.reply(`**This command is doesnt work yet**`);
 
     //Start of the /say command:
   } else if (commandName === 'say') {
@@ -125,8 +125,8 @@ client.on('interactionCreate', async function (interaction) {
 
       // Send the voice channel names as a message to a text channel
       interaction.reply(`**Voice channels:**\n${voiceChannelNames.join('\n')} \n\n**Text channels:**\n${textChannelNames.join('\n')}`);
+      
     });
-
 
     //Move Members
   } else if (commandName === 'move') {
