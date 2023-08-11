@@ -5,7 +5,8 @@ const { token } = require('./config.json');
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.GuildVoiceStates
   ]
 });
 
@@ -83,7 +84,7 @@ client.on('interactionCreate', async function (interaction) {
     interaction.reply(`You tried the test message ${interaction.user}`)
   } else if (commandName === 'channel') {
     checkVoiceChannel(interaction)
-    interaction.reply(`**This command is doesnt work yet**`);
+   // interaction.reply(`**This command is doesnt work yet**`);
 
     //Start of the /say command:
   } else if (commandName === 'say') {
